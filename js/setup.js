@@ -5,6 +5,7 @@
   var setupPopup = document.querySelector('.setup');
   setupPopup.classList.remove('hidden');
 
+
   window.wizard = {
     fisrtName: ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'],
     lastName: ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'],
@@ -17,11 +18,12 @@
     },
   };
 
+
   var generateRandomWizards = function (count) {
     var randomWizards = [];
     for (var i = 0; i < count; i++) {
       randomWizards.push({
-        name: window.wizard.getRandomValue(window.wizard.fisrtName) + window.wizard.getRandomValue(window.wizard.lastName),
+        name: window.wizard.getRandomValue(window.wizard.fisrtName) + ' ' + window.wizard.getRandomValue(window.wizard.lastName),
         colorCoat: window.wizard.getRandomValue(window.wizard.colorCoat),
         colorEyes: window.wizard.getRandomValue(window.wizard.colorEyes),
       });
@@ -29,6 +31,37 @@
     return randomWizards;
   };
 
-  console.log(generateRandomWizards(4));
+
+  var createSimilarWizards = function (randomWizards) {
+    var similarWizardTempalte = document.querySelector('#similar-wizard-template').content;
+    var similarWizardItem = similarWizardTempalte.querySelector('.setup-similar-item');
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < randomWizards.length; i++) {
+      var wizard = similarWizardItem.cloneNode(true);
+      var wizardName = wizard.querySelector('.setup-similar-label');
+      var wizardCoat = wizard.querySelector('.wizard-coat');
+      var wizardEyes = wizard.querySelector('.wizard-eyes');
+
+      wizardName.textContent = randomWizards[i].name;
+      wizardCoat.style.fill = randomWizards[i].colorCoat;
+      wizardEyes.style.fill = randomWizards[i].colorEyes;
+
+      fragment.appendChild(wizard);
+    }
+
+    return fragment;
+  };
+
+  var renderSimilarWizards = function (count) {
+    var similarWizards = setupPopup.querySelector('.setup-similar');
+    var similarWizardsList = similarWizards.querySelector('.setup-similar-list');
+
+    similarWizards.classList.remove('hidden');
+    similarWizardsList.appendChild(createSimilarWizards(generateRandomWizards(count)));
+  };
+
+  renderSimilarWizards(4);
+
 })();
 
