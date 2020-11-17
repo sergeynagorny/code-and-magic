@@ -65,58 +65,8 @@
 
 (function () {
 
-  var setup = document.querySelector('.setup');
-  var setupBtnOpen = document.querySelector('.setup-open');
-  var setupBtnClose = document.querySelector('.setup-close');
-
-  var KEYCODE = {
-    ENTER: 13,
-    ESC: 27,
-  };
-
-  var onSetupEscPress = function (evt) {
-    if (evt.keyCode === KEYCODE.ESC && evt.target.tagName.toLowerCase() !== 'input') {
-      setupClose();
-    }
-  };
-
-  var setupOpen = function () {
-    setup.classList.remove('hidden');
-    document.addEventListener('keydown', onSetupEscPress);
-  };
-
-  var setupClose = function () {
-    setup.classList.add('hidden');
-    document.removeEventListener('keydown', onSetupEscPress);
-  };
-
-  setupBtnOpen.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEYCODE.ENTER) {
-      if (setup.classList.contains('hidden')) {
-        setupOpen();
-      } else {
-        setupClose();
-      }
-    }
-  });
-
-  setupBtnClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEYCODE.ENTER) {
-      setupClose();
-    }
-  });
-
-  setupBtnOpen.addEventListener('click', function () {
-    setupOpen();
-  });
-
-  setupBtnClose.addEventListener('click', function () {
-    setupClose();
-  });
-
-
   // Кастомизация волшебника
-  // TOOO: Переписать с замыканиями, как положенно
+  // FIXME: Переписать с замыканиями, как положенно
 
   var setupWizard = document.querySelector('.setup-player');
   var wizardCoat = setupWizard.querySelector('.wizard-coat');
