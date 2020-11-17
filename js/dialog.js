@@ -10,10 +10,6 @@
   var dialogBtnOpen = document.querySelector('.setup-open');
   var dialogBtnClose = document.querySelector('.setup-close');
 
-  var KEYCODE = {
-    ENTER: 13,
-    ESC: 27,
-  };
 
   var dialogDefaultCoords = {
     x: window.getComputedStyle(dialog).left,
@@ -26,8 +22,8 @@
   };
 
   var onDialogEscPress = function (evt) {
-    if (evt.keyCode === KEYCODE.ESC && evt.target.tagName.toLowerCase() !== 'input') {
-      setupClose();
+    if (window.utils.isEscKeycode(evt) && evt.target.tagName.toLowerCase() !== 'input') {
+      dialogClose();
     }
   };
 
@@ -43,7 +39,7 @@
   };
 
   dialogBtnOpen.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEYCODE.ENTER) {
+    if (window.utils.isEnterKeycode(evt)) {
       if (dialog.classList.contains('hidden')) {
         dialogOpen();
       } else {
@@ -53,7 +49,7 @@
   });
 
   dialogBtnClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEYCODE.ENTER) {
+    if (window.utils.isEnterKeycode(evt)) {
       dialogClose();
     }
   });
