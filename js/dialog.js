@@ -62,6 +62,10 @@
     dialogClose();
   });
 
+  window.dialog = {
+    close: dialogClose,
+  };
+
 })();
 
 (function () {

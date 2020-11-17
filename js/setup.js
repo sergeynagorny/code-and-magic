@@ -42,4 +42,11 @@
     addClickListener(wizardItem);
   });
 
+  var formSetup = document.querySelector('.setup-wizard-form');
+
+  formSetup.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(formSetup), window.dialog.close, window.backend.errorHandler);
+  });
+
 })();
