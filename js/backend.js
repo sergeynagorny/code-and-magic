@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var SERVER_URL = 'https://javascript.pages.academy/code-and-magick';
   var STATUS_CODE = {
     400: 'Неверный запрос',
@@ -40,12 +39,20 @@
       xhr.open('GET', SERVER_URL + '/data');
       xhr.send();
     },
+
     save: function (data, onLoad, onError) {
       var xhr = setupRequest(onLoad, onError);
 
       xhr.open('POST', SERVER_URL);
       xhr.send(data);
     },
-  };
 
+    errorHandler: function (message) {
+      var node = document.createElement('div');
+      node.classList.add('error-message');
+      node.textContent = message;
+      document.body.appendChild(node);
+    },
+  };
 })();
+
