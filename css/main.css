@@ -883,3 +883,15 @@ input[type=radio]:checked + .review-mark-label {
   font-size: 14px;
   z-index: 1000;
 }
+
+.wizard-coat {
+  cursor: pointer;
+}
+
+.wizard-eyes {
+  cursor: pointer;
+}
+
+.setup-fireball {
+  cursor: pointer;
+}
