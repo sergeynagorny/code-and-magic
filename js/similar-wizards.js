@@ -7,7 +7,7 @@
 
   var onLoad = function (data) {
     dataWizards = data;
-    renderSimilarWizards(data);
+    updateSimilarWizards(data);
   };
 
   window.backend.load(onLoad, window.backend.errorHandler);
@@ -35,10 +35,60 @@
     var fragment = document.createDocumentFragment();
     similarWizards.classList.remove('hidden');
 
+    similarWizardsList.innerHTML = '';
     for (var i = 0; i < SIMILAR_WIZARDS_COUNT; i++) {
       fragment.appendChild(createSimilarWizards(data[i]));
     }
     similarWizardsList.appendChild(fragment);
+  };
+
+  var updateSimilarWizards = window.debounce(function () {
+    var WizardColor = {
+      coat: document.querySelector('input[name=coat-color]').value,
+      eyes: document.querySelector('input[name=eyes-color]').value,
+      fireball: document.querySelector('input[name=fireball-color]').value,
+    };
+
+    var getRank = function (wizard) {
+      var rank = 0;
+
+      if (wizard.colorCoat === WizardColor.coat) {
+        rank += 2;
+      }
+      if (wizard.colorEyes === WizardColor.eyes) {
+        rank += 1;
+      }
+      if (wizard.colorFireball === WizardColor.fireball) {
+        rank += 1;
+      }
+
+      return rank;
+    };
+
+    var namesComparator = function (left, right) {
+      if (left > right) {
+        return 1;
+      } else if (left < right) {
+        return -1;
+      } else {
+        return 0;
+      }
+    };
+
+    dataWizards.sort(function (left, right) {
+      var rankDiff = getRank(right) - getRank(left);
+      if (rankDiff === 0) {
+        rankDiff = namesComparator(left.name - right.name);
+      }
+      return rankDiff;
+    });
+
+    renderSimilarWizards(dataWizards);
+  });
+
+
+  window.similarWizards = {
+    update: updateSimilarWizards,
   };
 
 })();

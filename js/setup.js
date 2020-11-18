@@ -23,6 +23,7 @@
     },
   ];
 
+
   var addClickListener = function (item) {
     var i = 0;
     item.element.addEventListener('click', function () {
@@ -35,6 +36,7 @@
       }
 
       item.input.value = item.data[i];
+      window.similarWizards.update();
     });
   };
 
