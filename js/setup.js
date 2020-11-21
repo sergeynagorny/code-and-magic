@@ -2,53 +2,94 @@
 
 (function () {
 
-  var wizardSetup = [
-    {
-      element: document.querySelector('.wizard-coat'),
-      data: window.wizard.colorCoat,
-      method: 'fill',
-      input: document.querySelector('input[name=coat-color]'),
-    },
-    {
-      element: document.querySelector('.wizard-eyes'),
-      data: window.wizard.colorEyes,
-      method: 'fill',
-      input: document.querySelector('input[name=eyes-color]'),
-    },
-    {
-      element: document.querySelector('.setup-fireball-wrap'),
-      data: window.wizard.colorFireball,
-      method: 'background',
-      input: document.querySelector('input[name=fireball-color]'),
-    },
-  ];
-
-
-  var addClickListener = function (item) {
-    var i = 0;
-    item.element.addEventListener('click', function () {
-      i = i >= item.data.length - 1 ? 0 : ++i;
-
-      if (item.method === 'background') {
-        item.element.style.background = item.data[i];
-      } else {
-        item.element.style.fill = item.data[i];
-      }
-
-      item.input.value = item.data[i];
-      window.similarWizards.update();
-    });
+  var getRandomELement = function (array) {
+    var randomElementIndex = Math.floor(Math.random() * array.length);
+    return array[randomElementIndex];
   };
 
-  wizardSetup.forEach(function (wizardItem) {
-    addClickListener(wizardItem);
+  var Wizard = function (data) {
+    this.name = data.name;
+    this.colorCoat = data.colorCoat;
+    this.colorEyes = data.colorEyes;
+    this.colorFireball = data.colorFireball;
+  };
+
+  Wizard.prototype = {
+    setName: function (name) {
+      if (!name) {
+        throw new Error('Имя не задано');
+      }
+      if (name.length > 30) {
+        throw new Error('Недопустимое значение имени мага: ' + name);
+      }
+      this.name = name;
+      this.onChange(this);
+      return name;
+    },
+    changeColorCoat: function () {
+      var newColor = getRandomELement(window.wizard.colorCoat);
+      this.colorCoat = newColor;
+      this.onChange(this);
+      return newColor;
+    },
+    changeColorEyes: function () {
+      var newColor = getRandomELement(window.wizard.colorEyes);
+      this.colorEyes = newColor;
+      this.onChange(this);
+      return newColor;
+    },
+    changeColorFireball: function () {
+      var newColor = getRandomELement(window.wizard.colorFireball);
+      this.colorFireball = newColor;
+      this.onChange(this);
+      return newColor;
+    },
+    onChange: function (wizard) {
+      return wizard;
+    },
+  };
+
+  window.Wizard = Wizard;
+})();
+
+// mywizard.js
+(function () {
+  var wizardElement = document.querySelector('.setup-player');
+  var wizardCoatElement = wizardElement.querySelector('.wizard-coat');
+  var wizardEyesElement = wizardElement.querySelector('.wizard-eyes');
+  var wizardFierballElement = wizardElement.querySelector('.setup-fireball-wrap');
+  var wizardNameInput = document.querySelector('.setup-user-name');
+  var wizardCoatInput = document.querySelector('input[name=coat-color]');
+  var wizardEyesInput = document.querySelector('input[name=eyes-color]');
+  var wizardFierballInput = document.querySelector('input[name=fireball-color]');
+
+  var wizardData = {
+    name: wizardNameInput.value,
+    colorCoat: wizardCoatInput.value,
+    colorEyes: wizardEyesInput.value,
+    colorFireball: wizardFierballInput.value,
+  };
+
+  var wizard = new window.Wizard(wizardData);
+
+  wizardCoatElement.addEventListener('click', function () {
+    var newColor = wizard.changeColorCoat();
+    wizardCoatElement.style.fill = newColor;
+    wizardCoatInput = newColor;
   });
 
-  var formSetup = document.querySelector('.setup-wizard-form');
-
-  formSetup.addEventListener('submit', function (evt) {
-    evt.preventDefault();
-    window.backend.save(new FormData(formSetup), window.dialog.close, window.backend.errorHandler);
+  wizardEyesElement.addEventListener('click', function () {
+    var newColor = wizard.changeColorEyes();
+    wizardEyesElement.style.fill = newColor;
+    wizardEyesInput = newColor;
   });
 
+  wizardFierballElement.addEventListener('click', function () {
+    var newColor = wizard.changeColorFireball();
+    wizardFierballElement.style.background = newColor;
+    wizardFierballInput = newColor;
+  });
+
+
+  window.myWizard = wizard;
 })();

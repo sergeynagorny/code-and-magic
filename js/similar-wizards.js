@@ -1,94 +1,81 @@
 'use strict';
 
 (function () {
+
+  var wizards = [];
   var SIMILAR_WIZARDS_COUNT = 4;
-  var dataWizards = [];
-  var setup = document.querySelector('.setup');
+  var similarWizardTempalte = document.querySelector('#similar-wizard-template').content;
+  var similarWizard = similarWizardTempalte.querySelector('.setup-similar-item');
 
-  var onLoad = function (data) {
-    dataWizards = data;
-    updateSimilarWizards(data);
-  };
+  var createSimilarWizard = function (wizard) {
+    var element = similarWizard.cloneNode(true);
 
-  window.backend.load(onLoad, window.backend.errorHandler);
+    element.querySelector('.setup-similar-label').textContent = wizard.name;
+    element.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+    element.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
 
-  var createSimilarWizards = function (wizardItem) {
-    var similarWizardTempalte = document.querySelector('#similar-wizard-template').content;
-    var similarWizardItem = similarWizardTempalte.querySelector('.setup-similar-item');
-
-    var wizard = similarWizardItem.cloneNode(true);
-    var wizardName = wizard.querySelector('.setup-similar-label');
-    var wizardCoat = wizard.querySelector('.wizard-coat');
-    var wizardEyes = wizard.querySelector('.wizard-eyes');
-
-    wizardName.textContent = wizardItem.name;
-    wizardCoat.style.fill = wizardItem.colorCoat;
-    wizardEyes.style.fill = wizardItem.colorEyes;
-
-    return wizard;
-
+    return element;
   };
 
   var renderSimilarWizards = function (data) {
-    var similarWizards = setup.querySelector('.setup-similar');
+    var similarWizards = document.querySelector('.setup-similar');
     var similarWizardsList = similarWizards.querySelector('.setup-similar-list');
     var fragment = document.createDocumentFragment();
-    similarWizards.classList.remove('hidden');
 
+    similarWizards.classList.remove('hidden');
     similarWizardsList.innerHTML = '';
+
     for (var i = 0; i < SIMILAR_WIZARDS_COUNT; i++) {
-      fragment.appendChild(createSimilarWizards(data[i]));
+      fragment.appendChild(createSimilarWizard(data[i]));
     }
+
     similarWizardsList.appendChild(fragment);
   };
 
-  var updateSimilarWizards = window.debounce(function () {
-    var WizardColor = {
-      coat: document.querySelector('input[name=coat-color]').value,
-      eyes: document.querySelector('input[name=eyes-color]').value,
-      fireball: document.querySelector('input[name=fireball-color]').value,
-    };
+  var getRank = function (wizard) {
+    var rank = 0;
 
-    var getRank = function (wizard) {
-      var rank = 0;
+    if (wizard.colorCoat === window.myWizard.colorCoat) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === window.myWizard.colorEyes) {
+      rank += 1;
+    }
+    if (wizard.colorFireball === window.myWizard.colorFireball) {
+      rank += 0;
+    }
 
-      if (wizard.colorCoat === WizardColor.coat) {
-        rank += 2;
-      }
-      if (wizard.colorEyes === WizardColor.eyes) {
-        rank += 1;
-      }
-      if (wizard.colorFireball === WizardColor.fireball) {
-        rank += 1;
-      }
-
-      return rank;
-    };
-
-    var namesComparator = function (left, right) {
-      if (left > right) {
-        return 1;
-      } else if (left < right) {
-        return -1;
-      } else {
-        return 0;
-      }
-    };
-
-    dataWizards.sort(function (left, right) {
-      var rankDiff = getRank(right) - getRank(left);
-      if (rankDiff === 0) {
-        rankDiff = namesComparator(left.name - right.name);
-      }
-      return rankDiff;
-    });
-
-    renderSimilarWizards(dataWizards);
-  });
-
-
-  window.similarWizards = {
-    update: updateSimilarWizards,
+    return rank;
   };
+
+  var compareNames = function (leftName, rightName) {
+    if (leftName > rightName) {
+      return 1;
+    } else if (leftName < rightName) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
+  var compareWizards = function (left, right) {
+    var rankDiff = getRank(right) - getRank(left);
+    return rankDiff === 0 ? compareNames(left.name, right.name) : rankDiff;
+  };
+
+  var updateFilter = function () {
+    renderSimilarWizards(wizards.sort(compareWizards));
+  };
+
+  window.myWizard.onChange = function () {
+    updateFilter();
+  };
+
+  var onLoad = function (data) {
+    wizards = data;
+    updateFilter();
+  };
+
+  window.backend.load(onLoad, window.backend.errorHandler);
 
 })();

@@ -2,6 +2,7 @@
 
 (function () {
   var SERVER_URL = 'https://javascript.pages.academy/code-and-magick';
+  var TIMEOUT = 10000;
   var STATUS_CODE = {
     400: 'Неверный запрос',
     401: 'Пользователь не авторизован',
@@ -11,7 +12,7 @@
   var setupRequest = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = 1000;
+    xhr.timeout = TIMEOUT;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
