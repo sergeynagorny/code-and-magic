@@ -43,9 +43,27 @@
     wizardFierballInput = newColor;
   });
 
+  var applyWizardSetup = function () {
+    var wizardBase64 = {};
+    var wizardCopy = document.querySelector('svg').cloneNode(true);
+
+    wizardCopy.querySelector('#wizard-coat').style.fill = wizardCoatElement.style.fill;
+    wizardCopy.querySelector('#wizard-eyes').style.fill = wizardEyesElement.style.fill;
+
+    wizardBase64.right = window.svg2base64(wizardCopy);
+    wizardCopy.setAttribute('transform', 'scale(-1, 1)');
+    wizardBase64.left = window.svg2base64(wizardCopy);
+
+    window.restartGame(wizardBase64.right, wizardBase64.left);
+  };
+
   wizardForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(wizardForm), window.dialog.close, window.backend.errorHandler);
+
+    window.backend.save(new FormData(wizardForm), function () {
+      window.dialog.close();
+      applyWizardSetup();
+    }, window.backend.errorHandler);
   });
 
   window.myWizard = wizard;
