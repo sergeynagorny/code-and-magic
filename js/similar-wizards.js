@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var wizards = [];
   var SIMILAR_WIZARDS_COUNT = 4;
   var similarWizardTempalte = document.querySelector('#similar-wizard-template').content;
@@ -63,9 +62,9 @@
     return rankDiff === 0 ? compareNames(left.name, right.name) : rankDiff;
   };
 
-  var updateFilter = function () {
+  var updateFilter = window.debounce(function () {
     renderSimilarWizards(wizards.sort(compareWizards));
-  };
+  });
 
   window.myWizard.onChange = function () {
     updateFilter();

@@ -73,32 +73,36 @@
   var dialog = document.querySelector('.setup');
   var dialogHandle = document.querySelector('.upload');
 
+  var Coordinate = function (x, y) {
+    this.x = x;
+    this.y = y;
+  };
+  Coordinate.prototype = {
+    update: function (x, y) {
+      this.x = x;
+      this.y = y;
+    },
+    shift: function (shiftX, shiftY) {
+      this.shiftX = this.x - shiftX;
+      this.shiftY = this.y - shiftY;
+    },
+  };
+
   dialogHandle.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY,
-    };
-
+    var startCoords = new Coordinate(evt.clientX, evt.clientY);
     var dragged = false;
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       dragged = true;
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY,
-      };
+      startCoords.shift(moveEvt.clientX, moveEvt.clientY);
+      startCoords.update(moveEvt.clientX, moveEvt.clientY);
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY,
-      };
-
-      dialog.style.top = (dialog.offsetTop - shift.y) + 'px';
-      dialog.style.left = (dialog.offsetLeft - shift.x) + 'px';
+      dialog.style.left = (dialog.offsetLeft - startCoords.shiftX) + 'px';
+      dialog.style.top = (dialog.offsetTop - startCoords.shiftY) + 'px';
     };
 
     var onMouseUp = function (upEvt) {

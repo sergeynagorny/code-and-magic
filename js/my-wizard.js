@@ -1,57 +1,5 @@
 'use strict';
 
-(function () {
-
-  var getRandomELement = function (array) {
-    var randomElementIndex = Math.floor(Math.random() * array.length);
-    return array[randomElementIndex];
-  };
-
-  var Wizard = function (data) {
-    this.name = data.name;
-    this.colorCoat = data.colorCoat;
-    this.colorEyes = data.colorEyes;
-    this.colorFireball = data.colorFireball;
-  };
-
-  Wizard.prototype = {
-    setName: function (name) {
-      if (!name) {
-        throw new Error('Имя не задано');
-      }
-      if (name.length > 30) {
-        throw new Error('Недопустимое значение имени мага: ' + name);
-      }
-      this.name = name;
-      this.onChange(this);
-      return name;
-    },
-    changeColorCoat: function () {
-      var newColor = getRandomELement(window.wizard.colorCoat);
-      this.colorCoat = newColor;
-      this.onChange(this);
-      return newColor;
-    },
-    changeColorEyes: function () {
-      var newColor = getRandomELement(window.wizard.colorEyes);
-      this.colorEyes = newColor;
-      this.onChange(this);
-      return newColor;
-    },
-    changeColorFireball: function () {
-      var newColor = getRandomELement(window.wizard.colorFireball);
-      this.colorFireball = newColor;
-      this.onChange(this);
-      return newColor;
-    },
-    onChange: function (wizard) {
-      return wizard;
-    },
-  };
-
-  window.Wizard = Wizard;
-})();
-
 // mywizard.js
 (function () {
   var wizardElement = document.querySelector('.setup-player');
@@ -62,6 +10,7 @@
   var wizardCoatInput = document.querySelector('input[name=coat-color]');
   var wizardEyesInput = document.querySelector('input[name=eyes-color]');
   var wizardFierballInput = document.querySelector('input[name=fireball-color]');
+  var wizardForm = document.querySelector('.setup-wizard-form');
 
   var wizardData = {
     name: wizardNameInput.value,
@@ -71,6 +20,10 @@
   };
 
   var wizard = new window.Wizard(wizardData);
+
+  wizardNameInput.addEventListener('input', function () {
+    wizard.setName(wizardNameInput.value);
+  });
 
   wizardCoatElement.addEventListener('click', function () {
     var newColor = wizard.changeColorCoat();
@@ -90,6 +43,10 @@
     wizardFierballInput = newColor;
   });
 
+  wizardForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(wizardForm), window.dialog.close, window.backend.errorHandler);
+  });
 
   window.myWizard = wizard;
 })();
